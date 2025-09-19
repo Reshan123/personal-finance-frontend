@@ -1,10 +1,26 @@
+import { useMemo } from 'react';
 import { Card } from './Card';
 import type { IconName } from './Card';
 import type { FinancialItem } from '../types/types';
 
-// UPDATED: Now includes icon prop and uses the base Card
 const FinancialCard = ({ title, data, icon }: { title: string; data: FinancialItem[]; icon: IconName; }) => {
   if (!data || data.length === 0) return null;
+
+  // NEW: Calculate the total value using useMemo
+  const totalFormatted = useMemo(() => {
+    const parseCurrency = (value: string): number => {
+      if (!value || typeof value !== 'string') return 0;
+      const num = parseFloat(value.replace(/LKR|,|\s/g, ''));
+      return isNaN(num) ? 0 : num;
+    };
+
+    const total = data.reduce((acc, item) => acc + parseCurrency(item.value), 0);
+
+    return new Intl.NumberFormat('en-LK', {
+      style: 'currency',
+      currency: 'LKR',
+    }).format(total);
+  }, [data]);
 
   return (
     <Card title={title} icon={icon} padding={false}>
@@ -26,13 +42,21 @@ const FinancialCard = ({ title, data, icon }: { title: string; data: FinancialIt
               </tr>
             ))}
           </tbody>
+          {/* --- NEW: Totals Row --- */}
+          <tfoot className="bg-slate-800/50 font-bold text-slate-200">
+            <tr>
+              <td className="px-6 py-4">Total</td>
+              <td className="px-6 py-4 hidden md:table-cell"></td> {/* Empty cell for notes column */}
+              <td className="px-6 py-4 text-right font-mono">{totalFormatted}</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </Card>
   );
 };
 
-// NEW: Skeleton loader for the FinancialCard
+// Skeleton loader remains unchanged
 const FinancialCardSkeleton = () => (
   <div className="bg-slate-900 shadow-2xl shadow-black/20 rounded-2xl ring-1 ring-white/5 animate-pulse">
     <div className="p-4 border-b border-slate-800">
