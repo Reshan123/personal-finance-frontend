@@ -43,7 +43,7 @@ const FinancialCard = ({ title, data, icon }: { title: string; data: FinancialIt
             ))}
           </tbody>
           {/* --- NEW: Totals Row --- */}
-          <tfoot className="bg-slate-800/50 font-bold text-slate-200">
+          <tfoot className="bg-slate-600 font-bold text-slate-200">
             <tr>
               <td className="px-6 py-4">Total</td>
               <td className="px-6 py-4 hidden md:table-cell"></td> {/* Empty cell for notes column */}
