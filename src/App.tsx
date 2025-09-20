@@ -16,7 +16,8 @@ const App = () => {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   axios.defaults.baseURL = import.meta.env.VITE_API_URL || "https://mockapi.io/api/v1";
-  axios.defaults.headers.common["API_KEY"] = import.meta.env.VITE_API_KEY || "";
+  axios.defaults.headers.common["X-API-Key"] = import.meta.env.VITE_API_KEY || "";
+
 
   // --- Data Fetching ---
   const fetchData = () => {
