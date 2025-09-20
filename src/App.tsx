@@ -146,11 +146,16 @@ const App = () => {
           </div>
         );
       }
-      return (
-        <div className="mt-8">
-          <LiveCseTableSkeleton />
-        </div>
-      );
+
+      if (activeTab === "live_cse") {
+        return (
+          <div className="mt-8">
+            <LiveCseTableSkeleton />
+          </div>
+        );
+      }
+
+      return null; // Should not happen
     }
 
     if (activeTab === "overview") {
