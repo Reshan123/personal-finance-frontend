@@ -139,7 +139,7 @@ export const Header = ({
       className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-wait text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 ring-1 ring-slate-700 w-full text-sm"
     >
       <DatabaseZap
-        className={`w-4 h-4 ${isCalLoading ? "animate-spin" : ""}`}
+        className={`w-4 h-4`}
       />
       {isCalLoading ? "Updating..." : "Update CAL Prices"}
     </button>
@@ -165,7 +165,7 @@ export const Header = ({
       disabled={isLoading}
       className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-wait text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 ring-1 ring-slate-700 w-full text-sm"
     >
-      <LineChart className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+      <LineChart className={`w-4 h-4`} />
       {isLoading ? "Updating..." : "Update CSE Prices"}
     </button>
   );
