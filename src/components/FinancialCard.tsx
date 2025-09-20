@@ -67,6 +67,7 @@ const FinancialCard = ({
                 </td>
                 <td className="px-6 py-4 text-slate-400 hidden md:table-cell">
                   {areValuesHidden ? HIDDEN_PLACEHOLDER : item.notes}
+                  &nbsp;
                   {areValuesHidden
                     ? HIDDEN_PLACEHOLDER
                     : item.sub_notes && `(${item.sub_notes})`}
