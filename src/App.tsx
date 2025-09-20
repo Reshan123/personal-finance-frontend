@@ -59,7 +59,6 @@ const App = () => {
 
       setBasicData(basicResponse.data);
       setCseData(cseResponse.data);
-      console.log("Fetched live CSE data:", cseResponse.data);
       setLiveCseData(liveCseResponse.data);
       setLastUpdated(new Date());
     } catch (error) {
