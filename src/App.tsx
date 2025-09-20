@@ -187,8 +187,8 @@ const App = () => {
   };
 
   return (
-    <div className="bg-slate-950 min-h-screen font-sans text-slate-300 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="bg-slate-950 min-h-screen font-sans text-slate-300 p-4 sm:p-6 lg:p-9">
+      <div className="max-w-8xl mx-auto">
         <Header
           lastUpdated={lastUpdated}
           onRefresh={fetchData}
