@@ -172,7 +172,7 @@ export const Header = ({
 
   return (
     <>
-      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 border-b border-slate-800">
+      <header className="flex flex-row justify-between items-start sm:items-center pb-6 border-b border-slate-800">
         <div>
           <h1 className="text-3xl font-bold text-slate-100">
             Financial Overview
