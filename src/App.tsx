@@ -15,11 +15,21 @@ import { Header } from "./components/Header";
 import { ErrorMessage } from "./components/ErrorMessage";
 import { Tabs } from "./components/Tabs";
 // Types
-import type { FinancialData, CseData, LiveCseData } from "./types/types";
+import type {
+  FinancialData,
+  CseData,
+  LiveCseData,
+  MonthlyBudgetItem,
+} from "./types/types";
+import {
+  MonthlyBudget,
+  MonthlyBudgetSkeleton,
+} from "./components/MonthlyBudgetTable";
 
 const tabs = [
   { id: "overview", label: "Overview" },
   { id: "live_cse", label: "Live CSE Holdings" },
+  { id: "monthly_budget", label: "Monthly Budget" },
 ];
 
 const App = () => {
@@ -32,6 +42,10 @@ const App = () => {
     companies: { dads: [], personal: [] },
   });
   const [loading, setLoading] = useState(true);
+  const [calLoading, setCalLoading] = useState(false);
+  const [monthlyBudgetData, setMonthlyBudgetData] = useState<
+    MonthlyBudgetItem[]
+  >([]);
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
@@ -50,22 +64,39 @@ const App = () => {
       const basicInfoPromise = axios.get("/get_basic_info");
       const cseInfoPromise = axios.get("/get_cse_info");
       const liveCsePromise = axios.get("/get_cse_live_data");
+      const monthlyBudgetDataPromise = axios.get("/monthly_budget_data");
 
-      const [basicResponse, cseResponse, liveCseResponse] = await Promise.all([
-        basicInfoPromise,
-        cseInfoPromise,
-        liveCsePromise,
-      ]);
+      const [basicResponse, cseResponse, liveCseResponse, monthlyBudgetData] =
+        await Promise.all([
+          basicInfoPromise,
+          cseInfoPromise,
+          liveCsePromise,
+          monthlyBudgetDataPromise,
+        ]);
 
       setBasicData(basicResponse.data);
       setCseData(cseResponse.data);
       setLiveCseData(liveCseResponse.data);
+      setMonthlyBudgetData(monthlyBudgetData.data.monthly_budget_data);
       setLastUpdated(new Date());
     } catch (error) {
       setError("Failed to fetch financial data. Please try again.");
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const calUpdateValues = async () => {
+    setCalLoading(true);
+    try {
+      await axios.get("/update_cal_data");
+      await fetchData();
+    } catch (err) {
+      console.error("Failed to update CAL values:", err);
+      setError("Could not update CAL values. Please try again later.");
+    } finally {
+      setCalLoading(false);
     }
   };
 
@@ -105,6 +136,13 @@ const App = () => {
               <NetWorthSkeleton />
               <CseHoldingsSkeleton />
             </div>
+          </div>
+        );
+      }
+      if (activeTab === "monthly_budget") {
+        return (
+          <div className="mt-8">
+            <MonthlyBudgetSkeleton />
           </div>
         );
       }
@@ -161,6 +199,17 @@ const App = () => {
       );
     }
 
+    if (activeTab === "monthly_budget") {
+      return (
+        <div className="mt-8">
+          <MonthlyBudget
+            areValuesHidden={areValuesHidden}
+            data={monthlyBudgetData}
+          />
+        </div>
+      );
+    }
+
     if (activeTab === "live_cse") {
       return (
         <>
@@ -193,6 +242,8 @@ const App = () => {
           lastUpdated={lastUpdated}
           onRefresh={fetchData}
           isLoading={loading}
+          calOnClick={calUpdateValues}
+          isCalLoading={calLoading}
           areValuesHidden={areValuesHidden}
           onToggleVisibility={toggleValueVisibility}
         />

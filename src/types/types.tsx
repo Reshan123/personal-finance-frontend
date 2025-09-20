@@ -63,3 +63,11 @@ export interface LiveCseDataCombined {
   personal: LiveCompanyStock[];
   dads: LiveCompanyStock[];
 }
+
+export interface MonthlyBudgetItem {
+  category: string;
+  isCompleted: boolean;
+  amount: string;
+  account: string;
+  notes: string;
+}
