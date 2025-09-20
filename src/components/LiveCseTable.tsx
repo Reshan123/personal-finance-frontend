@@ -1,23 +1,23 @@
 import { useMemo } from "react";
 import { Card } from "./Card";
 import type { LiveCompanyStock } from "../types/types";
-import { TrendingUp, TrendingDown, RefreshCw } from "lucide-react"; // Added RefreshCw
+import { TrendingUp, TrendingDown, RefreshCw } from "lucide-react";
+
+const HIDDEN_PLACEHOLDER = "∗∗∗∗∗∗";
 
 interface LiveCseTableProps {
   data: LiveCompanyStock[];
-  onUpdate: () => void; // NEW: Function to trigger update
-  isUpdating: boolean; // NEW: State to show loading status
+  onUpdate: () => void;
+  isUpdating: boolean;
+  areValuesHidden: boolean;
 }
 
-const LiveCseTable = ({ data, onUpdate, isUpdating }: LiveCseTableProps) => {
-  // Props updated
-  if (!data || data.length === 0)
-    return (
-      <Card>
-        <p className="text-slate-500">No live CSE data available.</p>
-      </Card>
-    );
-
+const LiveCseTable = ({
+  data,
+  onUpdate,
+  isUpdating,
+  areValuesHidden,
+}: LiveCseTableProps) => {
   const { totalValueFormatted, totalGainLossFormatted, totalGainLoss } =
     useMemo(() => {
       const parseCurrency = (value: string): number => {
@@ -57,15 +57,21 @@ const LiveCseTable = ({ data, onUpdate, isUpdating }: LiveCseTableProps) => {
     </button>
   );
 
-  if (!data || data.length === 0)
+  if (!data || data.length === 0) {
     return (
-      <Card>
-        <p className="text-slate-500">No live CSE data available.</p>
+      <Card title="Live Market Data" icon="barChart" actions={updateButton}>
+        <p className="p-4 text-slate-500">No live CSE data available.</p>
       </Card>
     );
+  }
 
   return (
-    <Card padding={false} title="Live Market Data" icon="barChart" actions={updateButton}>
+    <Card
+      padding={false}
+      title="Live Market Data"
+      icon="barChart"
+      actions={updateButton}
+    >
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
           <thead className="bg-slate-800/50 text-xs text-slate-500 uppercase tracking-wider">
@@ -115,7 +121,7 @@ const LiveCseTable = ({ data, onUpdate, isUpdating }: LiveCseTableProps) => {
                     {stock.company_name}
                   </td>
                   <td className="px-4 py-4 text-right font-mono text-slate-200">
-                    {stock.per_share_value}
+                    {areValuesHidden ? HIDDEN_PLACEHOLDER : stock.current_price}
                   </td>
                   <td
                     className={`px-4 py-4 text-right font-mono flex items-center justify-end gap-1 ${
@@ -126,15 +132,21 @@ const LiveCseTable = ({ data, onUpdate, isUpdating }: LiveCseTableProps) => {
                         : "text-slate-400"
                     }`}
                   >
-                    {isGain && <TrendingUp size={14} />}
-                    {isLoss && <TrendingDown size={14} />}
-                    {stock.change}
+                    {areValuesHidden ? (
+                      HIDDEN_PLACEHOLDER
+                    ) : (
+                      <>
+                        {isGain && <TrendingUp size={14} />}
+                        {isLoss && <TrendingDown size={14} />}
+                        {stock.change}
+                      </>
+                    )}
                   </td>
                   <td className="px-4 py-4 text-right font-mono text-slate-400">
-                    {stock.volume_today}
+                    {areValuesHidden ? HIDDEN_PLACEHOLDER : stock.volume_today}
                   </td>
                   <td className="px-4 py-4 text-right font-mono text-slate-300">
-                    {stock.current_value}
+                    {areValuesHidden ? HIDDEN_PLACEHOLDER : stock.current_value}
                   </td>
                   <td
                     className={`px-4 py-4 text-right font-mono ${
@@ -143,7 +155,7 @@ const LiveCseTable = ({ data, onUpdate, isUpdating }: LiveCseTableProps) => {
                         : "text-red-400"
                     }`}
                   >
-                    {stock.gain_loss}
+                    {areValuesHidden ? HIDDEN_PLACEHOLDER : stock.gain_loss}
                   </td>
                 </tr>
               );
@@ -155,14 +167,14 @@ const LiveCseTable = ({ data, onUpdate, isUpdating }: LiveCseTableProps) => {
                 Total
               </td>
               <td className="px-4 py-4 text-right font-mono">
-                {totalValueFormatted}
+                {areValuesHidden ? HIDDEN_PLACEHOLDER : totalValueFormatted}
               </td>
               <td
                 className={`px-4 py-4 text-right font-mono ${
                   totalGainLoss >= 0 ? "text-green-400" : "text-red-400"
                 }`}
               >
-                {totalGainLossFormatted}
+                {areValuesHidden ? HIDDEN_PLACEHOLDER : totalGainLossFormatted}
               </td>
             </tr>
           </tfoot>

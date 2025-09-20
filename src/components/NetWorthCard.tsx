@@ -1,20 +1,23 @@
 import { PiggyBank } from 'lucide-react';
 
-const NetWorthCard = ({ netWorth }: { netWorth: string }) => (
+const HIDDEN_PLACEHOLDER = '∗∗∗∗∗∗';
+
+const NetWorthCard = ({ netWorth, areValuesHidden }: { netWorth: string, areValuesHidden: boolean }) => (
   <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-6 rounded-2xl shadow-2xl shadow-emerald-900/40 text-white">
     <div className="flex justify-between items-start">
       <div>
         <h3 className="text-base font-semibold text-teal-100 uppercase tracking-wider">
           Total Net Worth
         </h3>
-        <p className="text-4xl font-bold mt-2 text-shadow">{netWorth}</p>
+        <p className="text-4xl font-bold mt-2 text-shadow">
+          {areValuesHidden ? HIDDEN_PLACEHOLDER : netWorth}
+        </p>
       </div>
       <PiggyBank className="w-10 h-10 text-white/20" />
     </div>
   </div>
 );
 
-// NEW: Skeleton loader for the NetWorthCard
 const NetWorthSkeleton = () => (
   <div className="bg-slate-900 p-6 rounded-2xl shadow-2xl shadow-black/20 ring-1 ring-white/5 animate-pulse">
      <div className="flex justify-between items-start">
