@@ -67,10 +67,10 @@ const App = () => {
       }
 
       // Fetch all data in parallel
-      const basicInfoPromise = axios.get("/get_basic_info");
-      const cseInfoPromise = axios.get("/get_cse_info");
-      const liveCsePromise = axios.get("/get_cse_live_data");
-      const monthlyBudgetDataPromise = axios.get("/monthly_budget_data");
+      const basicInfoPromise = axios.get("/api/get_basic_info");
+      const cseInfoPromise = axios.get("/api/get_cse_info");
+      const liveCsePromise = axios.get("/api/get_cse_live_data");
+      const monthlyBudgetDataPromise = axios.get("/api/monthly_budget_data");
 
       const [basicResponse, cseResponse, liveCseResponse, monthlyBudgetData] =
         await Promise.all([
@@ -96,7 +96,7 @@ const App = () => {
   const updateCseLiveDataTable = async () => {
     setIsUpdating(true);
     try {
-      const response = await axios.get("/get_cse_live_data");
+      const response = await axios.get("/api/get_cse_live_data");
       setLiveCseData(response.data);
     } catch (err) {
       console.error("Failed to update stock prices:", err);
@@ -109,7 +109,7 @@ const App = () => {
   const calUpdateValues = async () => {
     setLoading(true);
     try {
-      await axios.get("/update_cal_data");
+      await axios.get("/api/update_cal_data");
       await fetchData();
     } catch (err) {
       console.error("Failed to update CAL values:", err);
@@ -126,7 +126,7 @@ const App = () => {
   const updateStockPrices = async () => {
     setLoading(true);
     try {
-      await axios.get("/update_stock_prices");
+      await axios.get("/api/update_stock_prices");
       await fetchData();
     } catch (err) {
       console.error("Failed to update stock prices:", err);
