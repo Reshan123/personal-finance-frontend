@@ -17,15 +17,19 @@ interface CardProps {
   icon?: IconName;
   children: React.ReactNode;
   className?: string;
-  padding?: boolean; // Control padding from the parent
+  padding?: boolean;
+  actions?: React.ReactNode;
 }
 
-export const Card: React.FC<CardProps> = ({ title, icon, children, className = '', padding = true }) => (
+export const Card: React.FC<CardProps> = ({ title, icon, children, className = '', padding = true, actions }) => (
   <div className={`bg-slate-900 shadow-2xl shadow-black/20 rounded-2xl ring-1 ring-white/5 ${className}`}>
     {title && (
-      <div className="flex items-center gap-3 p-4 border-b border-slate-800">
-        {icon && <span className="text-slate-500">{icons[icon]}</span>}
-        <h2 className="text-lg font-semibold text-slate-200">{title}</h2>
+      <div className="flex items-center justify-between p-4 border-b border-slate-800">
+        <div className="flex items-center gap-3">
+          {icon && <span className="text-slate-500">{icons[icon]}</span>}
+          <h2 className="text-lg font-semibold text-slate-200">{title}</h2>
+        </div>
+        {actions && <div>{actions}</div>}
       </div>
     )}
     <div className={padding ? 'p-4' : ''}>
