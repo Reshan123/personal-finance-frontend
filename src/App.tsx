@@ -60,6 +60,13 @@ const App = () => {
     setLoading(true);
     setError("");
     try {
+      const wakeUpServer = await axios.get("/");
+      console.log("Server wake-up response:", wakeUpServer.data);
+      if (wakeUpServer.status !== 200) {
+        throw new Error("Server is not responding as expected.");
+      }
+
+      // Fetch all data in parallel
       const basicInfoPromise = axios.get("/get_basic_info");
       const cseInfoPromise = axios.get("/get_cse_info");
       const liveCsePromise = axios.get("/get_cse_live_data");
