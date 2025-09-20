@@ -15,7 +15,7 @@ import { Header } from "./components/Header";
 import { ErrorMessage } from "./components/ErrorMessage";
 import { Tabs } from "./components/Tabs";
 // Types
-import type { FinancialData, CseData, LiveCompanyStock } from "./types/types";
+import type { FinancialData, CseData, LiveCseData } from "./types/types";
 
 const tabs = [
   { id: "overview", label: "Overview" },
@@ -25,8 +25,12 @@ const tabs = [
 const App = () => {
   // --- State Management ---
   const [basicData, setBasicData] = useState<FinancialData>({});
-  const [cseData, setCseData] = useState<CseData>({ companies: [] });
-  const [liveCseData, setLiveCseData] = useState<LiveCompanyStock[]>([]);
+  const [cseData, setCseData] = useState<CseData>({
+    companies: { dads: [], personal: [] },
+  });
+  const [liveCseData, setLiveCseData] = useState<LiveCseData>({
+    companies: { dads: [], personal: [] },
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -55,6 +59,7 @@ const App = () => {
 
       setBasicData(basicResponse.data);
       setCseData(cseResponse.data);
+      console.log("Fetched live CSE data:", cseResponse.data);
       setLiveCseData(liveCseResponse.data);
       setLastUpdated(new Date());
     } catch (error) {
@@ -145,7 +150,11 @@ const App = () => {
               />
             )}
             <CseHoldingsCard
-              data={cseData.companies}
+              data={cseData.companies.personal}
+              areValuesHidden={areValuesHidden}
+            />
+            <CseHoldingsCard
+              data={cseData.companies.dads}
               areValuesHidden={areValuesHidden}
             />
           </div>
@@ -155,14 +164,24 @@ const App = () => {
 
     if (activeTab === "live_cse") {
       return (
-        <div className="mt-8">
-          <LiveCseTable
-            data={liveCseData}
-            onUpdate={updateStockPrices}
-            isUpdating={isUpdating}
-            areValuesHidden={areValuesHidden}
-          />
-        </div>
+        <>
+          <div className="mt-8">
+            <LiveCseTable
+              data={liveCseData.companies.personal}
+              onUpdate={updateStockPrices}
+              isUpdating={isUpdating}
+              areValuesHidden={areValuesHidden}
+            />
+          </div>
+          <div className="mt-8">
+            <LiveCseTable
+              data={liveCseData.companies.dads}
+              onUpdate={updateStockPrices}
+              isUpdating={isUpdating}
+              areValuesHidden={areValuesHidden}
+            />
+          </div>
+        </>
       );
     }
     return null; // Should not happen

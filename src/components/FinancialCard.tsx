@@ -66,7 +66,7 @@ const FinancialCard = ({
                   {item.name}
                 </td>
                 <td className="px-6 py-4 text-slate-400 hidden md:table-cell">
-                  {areValuesHidden ? HIDDEN_PLACEHOLDER : item.notes}{" "}
+                  {areValuesHidden ? HIDDEN_PLACEHOLDER : item.notes}
                   {areValuesHidden
                     ? HIDDEN_PLACEHOLDER
                     : item.sub_notes && `(${item.sub_notes})`}
@@ -80,7 +80,7 @@ const FinancialCard = ({
           <tfoot className="bg-slate-600/50 font-bold text-slate-200">
             <tr>
               <td className="px-6 py-4">Total</td>
-              <td className="px-6 py-4 hidden md:table-cell"></td>{" "}
+              <td className="px-6 py-4 hidden md:table-cell"></td>
               {/* Empty cell for notes column */}
               <td className="px-6 py-4 text-right font-mono">
                 {areValuesHidden ? HIDDEN_PLACEHOLDER : totalFormatted}

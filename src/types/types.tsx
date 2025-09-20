@@ -27,10 +27,6 @@ export interface CompanyStock {
   gain_loss: string;
 }
 
-export interface CseData {
-  companies: CompanyStock[];
-}
-
 export interface LiveCompanyStock {
   row: number;
   stock_symbol: string;
@@ -51,6 +47,19 @@ export interface LiveCompanyStock {
 
 // Add the new data to the CseData type
 export interface CseData {
-  companies: CompanyStock[];
-  live_companies?: LiveCompanyStock[]; // Optional for backward compatibility
+  companies: CseDataCombined;
+}
+
+export interface CseDataCombined {
+  personal: CompanyStock[],
+  dads: CompanyStock[]
+}
+
+export interface LiveCseData {
+  companies: LiveCseDataCombined;
+}
+
+export interface LiveCseDataCombined {
+  personal: LiveCompanyStock[];
+  dads: LiveCompanyStock[];
 }
