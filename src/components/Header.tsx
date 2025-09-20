@@ -1,4 +1,11 @@
-import { RefreshCw, Eye, EyeOff, MoreVertical } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  MoreVertical,
+  DatabaseZap,
+  RotateCw,
+  LineChart,
+} from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 interface HeaderProps {
@@ -9,30 +16,32 @@ interface HeaderProps {
   onConfirmCalUpdate: () => void;
   areValuesHidden: boolean;
   onToggleVisibility: () => void;
+  onUpdateStockPrices: () => void; // Passed from App.tsx
 }
 
-// --- Confirmation Modal Component ---
+// --- Reusable Confirmation Modal Component ---
 const ConfirmationModal = ({
   isOpen,
   onClose,
   onConfirm,
   isLoading,
+  title,
+  message,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   isLoading: boolean;
+  title: string;
+  message: string;
 }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
       <div className="bg-slate-800 rounded-xl shadow-lg p-6 w-full max-w-sm ring-1 ring-slate-700">
-        <h3 className="text-lg font-semibold text-white">Confirm Action</h3>
-        <p className="text-slate-400 mt-2 text-sm">
-          Are you sure you want to update the CAL values? This action might take
-          a moment to complete.
-        </p>
+        <h3 className="text-lg font-semibold text-white">{title}</h3>
+        <p className="text-slate-400 mt-2 text-sm">{message}</p>
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onClose}
@@ -45,7 +54,7 @@ const ConfirmationModal = ({
             disabled={isLoading}
             className="px-4 py-2 rounded-md text-sm font-semibold bg-sky-600 hover:bg-sky-500 disabled:bg-sky-800 disabled:cursor-wait text-white transition-colors flex items-center gap-2"
           >
-            {isLoading && <RefreshCw size={14} className="animate-spin" />}
+            {isLoading && <RotateCw size={14} className="animate-spin" />}
             {isLoading ? "Updating..." : "Confirm"}
           </button>
         </div>
@@ -62,9 +71,11 @@ export const Header = ({
   onConfirmCalUpdate,
   areValuesHidden,
   onToggleVisibility,
+  onUpdateStockPrices,
 }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCalModalOpen, setIsCalModalOpen] = useState(false);
+  const [isStockModalOpen, setIsStockModalOpen] = useState(false); // New state for stock update modal
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -81,18 +92,31 @@ export const Header = ({
 
   const handleCalUpdateClick = () => {
     setIsMenuOpen(false);
-    setIsModalOpen(true);
+    setIsCalModalOpen(true);
   };
 
-  const handleConfirm = () => {
+  const handleStockUpdateClick = () => {
+    setIsMenuOpen(false);
+    setIsStockModalOpen(true);
+  };
+
+  const handleCalConfirm = () => {
     onConfirmCalUpdate();
   };
 
+  const handleStockConfirm = () => {
+    onUpdateStockPrices();
+  };
+
+  // Close modals when their respective loading states are finished
   useEffect(() => {
-    if (!isCalLoading) {
-      setIsModalOpen(false);
-    }
+    if (!isCalLoading) setIsCalModalOpen(false);
   }, [isCalLoading]);
+
+  useEffect(() => {
+    // Assuming the general `isLoading` is used for the stock price update
+    if (!isLoading) setIsStockModalOpen(false);
+  }, [isLoading]);
 
   // Reusable button components
   const HideShowButton = ({ isMenuItem = false }: { isMenuItem?: boolean }) => (
@@ -114,8 +138,10 @@ export const Header = ({
       disabled={isCalLoading}
       className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-wait text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 ring-1 ring-slate-700 w-full text-sm"
     >
-      <RefreshCw className={`w-4 h-4 ${isCalLoading ? "animate-spin" : ""}`} />
-      {isCalLoading ? "Updating..." : "Update CAL"}
+      <DatabaseZap
+        className={`w-4 h-4 ${isCalLoading ? "animate-spin" : ""}`}
+      />
+      {isCalLoading ? "Updating..." : "Update CAL Prices"}
     </button>
   );
 
@@ -128,14 +154,25 @@ export const Header = ({
       disabled={isLoading}
       className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-wait text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 ring-1 ring-slate-700 w-full text-sm"
     >
-      <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
-      {isLoading ? "Refreshing..." : "Refresh Data"}
+      <RotateCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+      {isLoading ? "Refreshing..." : "Refresh All Data"}
+    </button>
+  );
+
+  const UpdateStockPricesButton = () => (
+    <button
+      onClick={handleStockUpdateClick}
+      disabled={isLoading}
+      className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-wait text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 ring-1 ring-slate-700 w-full text-sm"
+    >
+      <LineChart className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+      {isLoading ? "Updating..." : "Update CSE Prices"}
     </button>
   );
 
   return (
     <>
-      <header className="flex flex-row justify-between items-start sm:items-center pb-6 border-b border-slate-800">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 border-b border-slate-800">
         <div>
           <h1 className="text-3xl font-bold text-slate-100">
             Financial Overview
@@ -152,12 +189,10 @@ export const Header = ({
         </div>
 
         <div className="mt-4 sm:mt-0 flex items-center gap-2">
-          {/* Show/Hide button - visible on desktop */}
           <div className="hidden sm:block">
             <HideShowButton />
           </div>
 
-          {/* Kebab Menu for all screen sizes */}
           <div ref={menuRef} className="relative">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -167,12 +202,12 @@ export const Header = ({
             </button>
 
             {isMenuOpen && (
-              <div className="absolute top-12 right-0 bg-slate-800/90 backdrop-blur-md rounded-lg shadow-xl w-48 p-2 flex flex-col gap-2 ring-1 ring-slate-700 z-20">
-                {/* Show/Hide button - visible ONLY in menu on mobile */}
+              <div className="absolute top-12 right-0 bg-slate-800/90 backdrop-blur-md rounded-lg shadow-xl w-52 p-2 flex flex-col gap-2 ring-1 ring-slate-700 z-20">
                 <div className="sm:hidden">
                   <HideShowButton isMenuItem={true} />
                 </div>
                 <UpdateCalButton />
+                <UpdateStockPricesButton />
                 <RefreshButton />
               </div>
             )}
@@ -180,11 +215,24 @@ export const Header = ({
         </div>
       </header>
 
+      {/* CAL Update Modal */}
       <ConfirmationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={handleConfirm}
+        isOpen={isCalModalOpen}
+        onClose={() => setIsCalModalOpen(false)}
+        onConfirm={handleCalConfirm}
         isLoading={isCalLoading}
+        title="Confirm CAL Update"
+        message="Are you sure you want to update the CAL values? This action might take a moment to complete."
+      />
+
+      {/* Stock Prices Update Modal */}
+      <ConfirmationModal
+        isOpen={isStockModalOpen}
+        onClose={() => setIsStockModalOpen(false)}
+        onConfirm={handleStockConfirm}
+        isLoading={isLoading} // Using the general isLoading for this
+        title="Confirm CSE Price Update"
+        message="Are you sure you want to update live CSE stock prices? This will refresh the market data."
       />
     </>
   );

@@ -65,7 +65,7 @@ const LiveCseTable = ({
         return isNaN(num) ? 0 : num;
       };
       const totalValue = data.reduce(
-        (acc, stock) => acc + parseCurrency(stock.current_value),
+        (acc, stock) => acc + parseCurrency(stock.current_price_value),
         0
       );
       const totalGainLoss = data.reduce(
@@ -102,7 +102,7 @@ const LiveCseTable = ({
       className="flex items-center gap-2 bg-sky-600/50 hover:bg-sky-600/80 disabled:opacity-50 disabled:cursor-wait text-sky-100 font-semibold py-1 px-3 rounded-md text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
     >
       <RefreshCw className={`w-3 h-3 ${isUpdating ? "animate-spin" : ""}`} />
-      {isUpdating ? "Updating..." : "Update Prices"}
+      {isUpdating ? "Updating..." : "Update Table"}
     </button>
   );
 
@@ -217,7 +217,7 @@ const LiveCseTable = ({
                     <td className="px-4 py-4 text-right font-mono text-slate-300">
                       {areValuesHidden
                         ? HIDDEN_PLACEHOLDER
-                        : stock.current_value}
+                        : stock.current_price_value}
                     </td>
                     <td
                       className={`px-4 py-4 text-right font-mono ${
@@ -301,7 +301,7 @@ const LiveCseTable = ({
               );
             })}
           </tbody>
-          <tfoot className="bg-slate-800/50 font-bold text-slate-200">
+          <tfoot className="bg-slate-700 font-bold text-slate-200">
             <tr>
               <td colSpan={6} className="px-4 py-4 text-left">
                 Total

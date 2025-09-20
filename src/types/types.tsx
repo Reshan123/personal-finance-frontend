@@ -41,7 +41,7 @@ export interface LiveCompanyStock {
   current_price: string;
   change: string;
   volume_today: string;
-  current_price_value: number;
+  current_price_value: string;
   gain_loss_value: number;
 }
 

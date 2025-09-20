@@ -42,7 +42,6 @@ const App = () => {
     companies: { dads: [], personal: [] },
   });
   const [loading, setLoading] = useState(true);
-  const [calLoading, setCalLoading] = useState(false);
   const [monthlyBudgetData, setMonthlyBudgetData] = useState<
     MonthlyBudgetItem[]
   >([]);
@@ -87,8 +86,21 @@ const App = () => {
     }
   };
 
+  const updateCseLiveDataTable = async () => {
+    setIsUpdating(true);
+    try {
+      const response = await axios.get("/get_cse_live_data");
+      setLiveCseData(response.data);
+    } catch (err) {
+      console.error("Failed to update stock prices:", err);
+      setError("Could not update stock prices. Please try again later.");
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
   const calUpdateValues = async () => {
-    setCalLoading(true);
+    setLoading(true);
     try {
       await axios.get("/update_cal_data");
       await fetchData();
@@ -96,7 +108,7 @@ const App = () => {
       console.error("Failed to update CAL values:", err);
       setError("Could not update CAL values. Please try again later.");
     } finally {
-      setCalLoading(false);
+      setLoading(false);
     }
   };
 
@@ -105,7 +117,7 @@ const App = () => {
   }, []);
 
   const updateStockPrices = async () => {
-    setIsUpdating(true);
+    setLoading(true);
     try {
       await axios.get("/update_stock_prices");
       await fetchData();
@@ -113,7 +125,7 @@ const App = () => {
       console.error("Failed to update stock prices:", err);
       setError("Could not update stock prices. Please try again later.");
     } finally {
-      setIsUpdating(false);
+      setLoading(false);
     }
   };
 
@@ -221,7 +233,7 @@ const App = () => {
           <div className="mt-8">
             <LiveCseTable
               data={liveCseData.companies.personal}
-              onUpdate={updateStockPrices}
+              onUpdate={updateCseLiveDataTable}
               isUpdating={isUpdating}
               areValuesHidden={areValuesHidden}
             />
@@ -229,7 +241,7 @@ const App = () => {
           <div className="mt-8">
             <LiveCseTable
               data={liveCseData.companies.dads}
-              onUpdate={updateStockPrices}
+              onUpdate={updateCseLiveDataTable}
               isUpdating={isUpdating}
               areValuesHidden={areValuesHidden}
             />
@@ -248,9 +260,10 @@ const App = () => {
           onRefresh={fetchData}
           isLoading={loading}
           onConfirmCalUpdate={calUpdateValues}
-          isCalLoading={calLoading}
+          isCalLoading={loading}
           areValuesHidden={areValuesHidden}
           onToggleVisibility={toggleValueVisibility}
+          onUpdateStockPrices={updateStockPrices}
         />
 
         <main className="mt-8">
