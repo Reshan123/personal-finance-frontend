@@ -247,7 +247,7 @@ const App = () => {
           lastUpdated={lastUpdated}
           onRefresh={fetchData}
           isLoading={loading}
-          calOnClick={calUpdateValues}
+          onConfirmCalUpdate={calUpdateValues}
           isCalLoading={calLoading}
           areValuesHidden={areValuesHidden}
           onToggleVisibility={toggleValueVisibility}
