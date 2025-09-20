@@ -97,7 +97,7 @@ const App = () => {
     } finally {
       setIsUpdating(false);
     }
-  }
+  };
 
   const calUpdateValues = async () => {
     setLoading(true);
@@ -136,8 +136,8 @@ const App = () => {
   const netWorth = basicData?.Other?.find((item) => item.name === "Net Worth");
 
   const renderTabContent = () => {
-    if (loading) {
-      if (activeTab === "overview") {
+    if (loading || isUpdating) {
+      if (loading && activeTab === "overview") {
         return (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
             <div className="lg:col-span-2 space-y-8">
@@ -151,7 +151,7 @@ const App = () => {
           </div>
         );
       }
-      if (activeTab === "monthly_budget") {
+      if (loading && activeTab === "monthly_budget") {
         return (
           <div className="mt-8">
             <MonthlyBudgetSkeleton />
@@ -159,11 +159,16 @@ const App = () => {
         );
       }
 
-      if (activeTab === "live_cse") {
+      if ((loading || isUpdating) && activeTab === "live_cse") {
         return (
-          <div className="mt-8">
-            <LiveCseTableSkeleton />
-          </div>
+          <>
+            <div className="mt-8">
+              <LiveCseTableSkeleton />
+            </div>
+            <div className="mt-8">
+              <LiveCseTableSkeleton />
+            </div>
+          </>
         );
       }
 
